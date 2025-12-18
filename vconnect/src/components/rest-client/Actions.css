@@ -1,0 +1,20 @@
+.actions-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  flex:0.1;
+  width: fit-content;
+}
+
+.send-button,
+.cancel-button {
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  margin-right: 10px;
+}
+
+.send-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

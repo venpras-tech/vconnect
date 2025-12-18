@@ -1,0 +1,43 @@
+.json-parser {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.parser-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
+}
+
+.parser-left, .parser-right {
+     width: 48%;
+    height: 90%;
+    border: 1px solid #ccc;
+    overflow: auto;
+}
+
+.parser-right {
+    padding: 10px;
+    font-family: monospace;
+}
+
+.parser-left {
+    white-space: pre-wrap;
+}
+
+.parser-right {
+    background-color: #f4f4f4;
+    position: relative;
+}
+
+.parser-right pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.error {
+    color: red;
+}

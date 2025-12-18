@@ -1,0 +1,26 @@
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  height: 100vh;
+}
+
+.grid-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 100px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  text-decoration: none;
+  color: black;
+  font-size: 18px;
+  border-radius: 8px;
+}
+
+.grid-item:hover {
+  background-color: #e0e0e0;
+}

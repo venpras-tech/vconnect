@@ -1,0 +1,36 @@
+.rest-client-container {
+  display: flex;
+  height: calc(100vh - 100px);
+  box-sizing: border-box;
+}
+
+.left-panel {
+  width: 25%;
+  min-width: 200px;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.right-panel {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+}
+
+.rest-client-main-content {
+  flex-grow: 1;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-panel-req {
+  display: flex;
+  flex: 0.1;
+  padding: 2px;
+}
+
+.top-panel-pay {
+  flex: 0.9; 
+}

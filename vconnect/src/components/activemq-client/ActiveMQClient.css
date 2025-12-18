@@ -1,0 +1,18 @@
+.activemq-client-container {
+    display: flex;
+    height: calc(100vh - 120px); /* Adjust based on header/footer height */
+  }
+  
+  .left-panel-activemq {
+    width: 25%;
+    min-width: 200px;
+    border-right: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .right-panel-activemq {
+    width: 75%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }

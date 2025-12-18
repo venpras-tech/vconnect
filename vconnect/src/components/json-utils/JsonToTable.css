@@ -1,0 +1,44 @@
+.json-to-table {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-container {
+    display: flex;
+    gap: 10px;
+    height: 100%;
+}
+
+.table-left {
+     width: 48%;
+    height: 90%;
+    border: 1px solid #ccc;
+    overflow: auto;
+}
+
+.table-right {
+    width: 100%;
+    overflow: auto;
+}
+
+.table-right table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-right th, .table-right td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.table-right th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #f2f2f2;
+}
+
+.error {
+    color: red;
+}

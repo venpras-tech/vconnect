@@ -1,0 +1,40 @@
+.json-util-container {
+  display: flex;
+  min-height: calc(100vh - 100px);
+}
+
+.sidebar {
+  width: 200px;
+  background-color: #f0f0f0;
+  padding: 15px;
+  border-right: 1px solid #ccc;
+}
+
+.sidebar nav ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar nav li {
+  margin-bottom: 10px;
+}
+
+.sidebar nav a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+  background-color: #ddd;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+}

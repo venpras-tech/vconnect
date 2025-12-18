@@ -1,0 +1,8 @@
+.response-container {
+  margin-top: 20px;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+}

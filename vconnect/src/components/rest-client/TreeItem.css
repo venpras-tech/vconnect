@@ -1,0 +1,93 @@
+.tree-item {
+  margin-left: 16px;
+}
+
+.item-content {
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  cursor: pointer;
+  position: relative;
+  gap: 6px;
+}
+
+.item-toggle {
+  width: 20px;
+  min-width: 20px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.item-name {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.method-GET { color: #28a745; }
+.method-POST { color: #007bff; }
+.method-PUT { color: #ffc107; }
+.method-DELETE { color: #dc3545; }
+.method-PATCH { color: #fd7e14; }
+.method-OPTIONS { color: #6c757d; }
+.method-HEAD { color: #17a2b8; }
+
+.item-name span[class^="method-"] {
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+
+
+.item-actions {
+  display: flex;
+  align-items: center;
+}
+
+.item-actions button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  visibility: hidden;
+}
+
+.item-content:hover .item-actions button {
+  visibility: visible;
+}
+
+.dropdown-menu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
+  right: 0;
+  top: 100%;
+  z-index: 100;
+}
+
+.dropdown-menu div {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.dropdown-menu div:hover {
+  background-color: #f0f0f0;
+}
+
+.children {
+  margin-left: 16px;
+  border-left: 1px solid #ccc;
+}
+
+.tree-item.selected{
+  background-color: #255d99;
+}
+
+.item-name{
+  cursor: pointer;
+}

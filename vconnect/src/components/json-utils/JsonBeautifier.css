@@ -1,0 +1,48 @@
+.json-beautifier {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.beautifier-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
+}
+
+.beautifier-left, .beautifier-right {
+    width: 48%;
+    height: 90%;
+    border: 1px solid #ccc;
+    overflow: auto;
+}
+
+.beautifier-right {
+    padding: 10px;
+    font-family: monospace;
+}
+
+.beautifier-left {
+    white-space: pre-wrap;
+}
+
+.beautifier-right {
+    background-color: #f4f4f4;
+    position: relative;
+}
+
+.copy-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+}
+
+.beautifier-right pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.error {
+    color: red;
+}

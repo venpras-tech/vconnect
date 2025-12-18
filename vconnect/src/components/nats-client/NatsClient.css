@@ -1,0 +1,17 @@
+.nats-client-container {
+    display: flex;
+    height: calc(100vh - 120px); /* Adjust based on header/footer height */
+  }
+  
+  .left-panel-nats {
+    width: 25%;
+    min-width: 200px;
+    border-right: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .right-panel-nats {
+    width: 75%;
+    padding: 20px;
+    overflow-y: auto;
+  }

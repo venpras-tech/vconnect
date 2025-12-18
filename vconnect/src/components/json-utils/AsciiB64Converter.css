@@ -1,0 +1,38 @@
+.ascii-b64-converter {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1rem;
+}
+
+.ascii-b64-converter h3 {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.converter-container {
+    display: flex;
+    flex-grow: 1;
+    gap: 1rem;
+}
+
+.panel {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    flex: 1;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+    height: 70vh;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.actions button {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
