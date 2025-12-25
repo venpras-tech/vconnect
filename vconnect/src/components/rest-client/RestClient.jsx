@@ -476,11 +476,9 @@ const RestClient = () => {
                       url={activeTab.request.url}
                       onMethodChange={(method) => handleRequestChange({ method })}
                       onUrlChange={(url) => handleRequestChange({ url })}
-                    />
-                    <Actions
-                      isSending={isSending}
-                      onSend={() => handleSend(activeTab.request)}
-                      onCancel={handleCancel}
+                      actions={
+                      <Actions isSending={isSending} onSend={()=>handleSend(activeTab.request)} onCancel={handleCancel}/>
+                      }
                     />
                   </div>
                   <div className='top-panel-pay'>
