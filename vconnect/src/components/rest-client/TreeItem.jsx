@@ -40,6 +40,16 @@ const TreeItem = ({ item, onContextMenu, onAddStack, onAddRequest, onLoadRequest
     };
   }, []);
 
+const methodClasses = {
+  GET: 'text-green-500',
+  POST: 'text-blue-500',
+  PUT: 'text-blue-500',
+  DELETE: 'text-blue-500',
+  POST: 'text-blue-500',
+  POST: 'text-blue-500',
+  POST: 'text-blue-500'
+}
+
   return (
     <div className={`tree-item ${isSelected ? 'selected' : ''}`} onContextMenu={handleContextMenu}>
       <div className="item-content">
