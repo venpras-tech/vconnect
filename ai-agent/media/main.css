@@ -109,4 +109,13 @@ body, html {
 #token-input {
     flex-grow: 2; /* Give token input more space */
 }
+#prompt-input:disabled, #send-button:disabled {
+    background-color: var(--vscode-disabledInput-background);
+    color: var(--vscode-disabledInput-foreground);
+    cursor: not-allowed;
+}
+
+#send-button:disabled:hover {
+    background-color: var(--vscode-disabledInput-background);
+}
 

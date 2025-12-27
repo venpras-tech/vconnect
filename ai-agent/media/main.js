@@ -22,6 +22,10 @@
                 token: token
             });
 
+            // Disable input and button
+            promptInput.disabled = true;
+            sendButton.disabled = true;
+
             const userMessage = document.createElement('div');
             userMessage.className = 'message user-message';
             userMessage.textContent = prompt;
@@ -40,6 +44,11 @@
                 assistantMessage.textContent = message.text;
                 messageList.appendChild(assistantMessage);
                 messageList.scrollTop = messageList.scrollHeight;
+
+                // Re-enable input and button
+                promptInput.disabled = false;
+                sendButton.disabled = false;
+                promptInput.focus();
                 break;
             case 'plan':
                 const planMessage = document.createElement('div');

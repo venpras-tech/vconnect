@@ -1,8 +1,9 @@
+
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { OllamaProvider } from './llm/OllamaProvider';
-import { TextEncoder } from 'util';
+import { TextEncoder, TextDecoder } from 'util';
 import { LLMConnectionError } from './llm/errors';
 
 // This method is called when your extension is activated
@@ -52,7 +53,7 @@ class ChatViewProvider implements vscode.WebviewViewProvider {
 
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-        webviewView.webview.onDidReceiveMessage(async message => {
+        webviewView.webview.onDidReceiveMessage(async (message: any) => {
             switch (message.command) {
                 case 'load':
                     try {
@@ -111,7 +112,7 @@ class ChatViewProvider implements vscode.WebviewViewProvider {
         }
     
         // 2. Add content of other visible editors
-        const otherEditors = vscode.window.visibleTextEditors.filter(editor => editor !== activeEditor);
+        const otherEditors = vscode.window.visibleTextEditors.filter((editor: vscode.TextEditor) => editor !== activeEditor);
         if (otherEditors.length > 0) {
             context += '---\n\n// Other open files:\n\n';
             for (const editor of otherEditors) {
@@ -228,9 +229,53 @@ private async executeActions(actionsResponse: string, webviewView: vscode.Webvie
                         throw new Error('File action requires a path argument.');
                     }
                     const filePath = vscode.Uri.joinPath(workspaceRoot, actionArg);
-                    await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(filePath, '..'));
-                    await vscode.workspace.fs.writeFile(filePath, new TextEncoder().encode(actionContent));
-                    actionsExecuted.push(`✅ Created/Modified file: ${actionArg}`);
+                    let fileExists = false;
+                    try {
+                        await vscode.workspace.fs.stat(filePath);
+                        fileExists = true;
+                    } catch {
+                        // File doesn't exist
+                    }
+
+                    if (fileExists) {
+                        // File exists, show diff and ask for confirmation
+                        const originalContent = new TextDecoder().decode(await vscode.workspace.fs.readFile(filePath));
+                        const newContent = actionContent;
+
+                        await vscode.commands.executeCommand('vscode.diff',
+                            vscode.Uri.file(filePath.fsPath).with({ scheme: 'file-original', query: 'original' }),
+                            filePath,
+                            `Original vs. Proposed Changes for ${actionArg}`
+                        );
+                        
+                        // A custom scheme to hold the original content
+                        const originalContentUri = vscode.Uri.file(filePath.fsPath).with({ scheme: 'file-original', query: 'original' });
+                        vscode.workspace.registerTextDocumentContentProvider('file-original', {
+                            provideTextDocumentContent: (uri: vscode.Uri) => {
+                                return originalContent;
+                            }
+                        });
+
+
+                        const choice = await vscode.window.showInformationMessage(
+                            `Apply changes to ${actionArg}?`,
+                            { modal: true },
+                            'Apply',
+                            'Cancel'
+                        );
+
+                        if (choice === 'Apply') {
+                            await vscode.workspace.fs.writeFile(filePath, new TextEncoder().encode(newContent));
+                            actionsExecuted.push(`✅ Modified file: ${actionArg}`);
+                        } else {
+                            actionsExecuted.push(`❌ Canceled modification of file: ${actionArg}`);
+                        }
+                    } else {
+                        // File doesn't exist, create it
+                        await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(filePath, '..'));
+                        await vscode.workspace.fs.writeFile(filePath, new TextEncoder().encode(actionContent));
+                        actionsExecuted.push(`✅ Created file: ${actionArg}`);
+                    }
                 } else if (actionType === 'command') {
                     const terminal = vscode.window.createTerminal({ name: "AI Agent Action" });
                     terminal.sendText(actionContent);
