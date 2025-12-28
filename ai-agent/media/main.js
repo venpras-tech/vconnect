@@ -41,7 +41,8 @@
             case 'response':
                 const assistantMessage = document.createElement('div');
                 assistantMessage.className = 'message assistant-message';
-                assistantMessage.textContent = message.text;
+                // Use `marked` to render Markdown content
+                assistantMessage.innerHTML = marked.parse(message.text);
                 messageList.appendChild(assistantMessage);
                 messageList.scrollTop = messageList.scrollHeight;
 
@@ -53,7 +54,8 @@
             case 'plan':
                 const planMessage = document.createElement('div');
                 planMessage.className = 'message plan-message';
-                planMessage.textContent = "Thinking...\n\n" + message.text;
+                // Use `marked` to render Markdown content, which might contain formatting
+                planMessage.innerHTML = marked.parse("Thinking...\n\n" + message.text);
                 messageList.appendChild(planMessage);
                 messageList.scrollTop = messageList.scrollHeight;
                 break;

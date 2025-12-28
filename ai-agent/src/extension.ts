@@ -1,10 +1,10 @@
-
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { OllamaProvider } from './llm/OllamaProvider';
 import { TextEncoder, TextDecoder } from 'util';
 import { LLMConnectionError } from './llm/errors';
+import { exec } from 'child_process';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -12,16 +12,39 @@ export function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "ai-agent" is now active!');
 
     const llmProvider = new OllamaProvider();
-    const provider = new ChatViewProvider(context.extensionUri, llmProvider, context);
+	const originalFileContentProvider = new OriginalFileContentProvider();
+    const provider = new ChatViewProvider(context.extensionUri, llmProvider, context, originalFileContentProvider);
 
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider(ChatViewProvider.viewType, provider));
+	
+	context.subscriptions.push(
+		vscode.workspace.registerTextDocumentContentProvider('file-original', originalFileContentProvider)
+	);
 
     let disposable = vscode.commands.registerCommand('ai-agent.showChat', () => {
         // This command can be used to programmatically show the view
     });
 
     context.subscriptions.push(disposable);
+}
+
+class OriginalFileContentProvider implements vscode.TextDocumentContentProvider {
+    private originalContent: Map<string, string> = new Map();
+
+    // Emitter and event for handling content updates
+    private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
+    readonly onDidChange = this._onDidChange.event;
+
+    provideTextDocumentContent(uri: vscode.Uri): string {
+        return this.originalContent.get(uri.toString()) || '';
+    }
+
+    setOriginalContent(uri: vscode.Uri, content: string): void {
+        this.originalContent.set(uri.toString(), content);
+        // Fire an event to notify VS Code that the content of the URI has changed.
+        this._onDidChange.fire(uri);
+    }
 }
 
 class ChatViewProvider implements vscode.WebviewViewProvider {
@@ -33,6 +56,7 @@ class ChatViewProvider implements vscode.WebviewViewProvider {
         private readonly _extensionUri: vscode.Uri,
         private readonly _llmProvider: OllamaProvider,
         private readonly _context: vscode.ExtensionContext,
+		private readonly _originalFileContentProvider: OriginalFileContentProvider
     ) { }
 
     public resolveWebviewView(
@@ -213,12 +237,10 @@ private async executeActions(actionsResponse: string, webviewView: vscode.Webvie
         }
 
         const actionRegex = /^\`\`\`(\w+)(?::([\w./\\-]+))?\r?\n([\s\S]*?)\r?\n^\`\`\`/gm;
-        let match;
+        const actions = [...actionsResponse.matchAll(actionRegex)];
         const actionsExecuted = [];
-        let hasActions = false;
     
-        while ((match = actionRegex.exec(actionsResponse)) !== null) {
-            hasActions = true;
+        for (const match of actions) {
             const actionType = match[1];
             const actionArg = match[2];
             const actionContent = match[3];
@@ -242,20 +264,14 @@ private async executeActions(actionsResponse: string, webviewView: vscode.Webvie
                         const originalContent = new TextDecoder().decode(await vscode.workspace.fs.readFile(filePath));
                         const newContent = actionContent;
 
+                        const originalContentUri = vscode.Uri.file(filePath.fsPath).with({ scheme: 'file-original', query: `original=${filePath.toString()}` });
+                        this._originalFileContentProvider.setOriginalContent(originalContentUri, originalContent);
+
                         await vscode.commands.executeCommand('vscode.diff',
-                            vscode.Uri.file(filePath.fsPath).with({ scheme: 'file-original', query: 'original' }),
+                            originalContentUri,
                             filePath,
                             `Original vs. Proposed Changes for ${actionArg}`
                         );
-                        
-                        // A custom scheme to hold the original content
-                        const originalContentUri = vscode.Uri.file(filePath.fsPath).with({ scheme: 'file-original', query: 'original' });
-                        vscode.workspace.registerTextDocumentContentProvider('file-original', {
-                            provideTextDocumentContent: (uri: vscode.Uri) => {
-                                return originalContent;
-                            }
-                        });
-
 
                         const choice = await vscode.window.showInformationMessage(
                             `Apply changes to ${actionArg}?`,
@@ -277,10 +293,31 @@ private async executeActions(actionsResponse: string, webviewView: vscode.Webvie
                         actionsExecuted.push(`✅ Created file: ${actionArg}`);
                     }
                 } else if (actionType === 'command') {
-                    const terminal = vscode.window.createTerminal({ name: "AI Agent Action" });
-                    terminal.sendText(actionContent);
-                    terminal.show();
-                    actionsExecuted.push(`✅ Executed command: \`${actionContent.split(/\\r?\\n/)[0]}\``);
+                    try {
+                        const output = await new Promise<string>((resolve, reject) => {
+                            const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                            const cwd = workspaceFolder ? workspaceFolder.uri.fsPath : undefined;
+
+                            exec(actionContent, { cwd }, (error, stdout, stderr) => {
+                                if (error) {
+                                    const errorMessage = `Command failed: ${error.message}\n\nSTDOUT:\n${stdout}\n\nSTDERR:\n${stderr}`;
+                                    reject(new Error(errorMessage));
+                                    return;
+                                }
+                                let result = '';
+                                if (stdout) {
+                                    result += `STDOUT:\n${stdout}\n`;
+                                }
+                                if (stderr) {
+                                    result += `STDERR:\n${stderr}\n`;
+                                }
+                                resolve(result.trim() || 'Command executed successfully with no output.');
+                            });
+                        });
+                        actionsExecuted.push(`✅ Executed command: \`${actionContent.split(/\r?\n/)[0]}\`\n\n**Output:**\n\`\`\`\n${output}\n\`\`\``);
+                    } catch (error: any) {
+                        actionsExecuted.push(`❌ Error executing command \`${actionContent.split(/\r?\n/)[0]}\`:\n\n**Error:**\n\`\`\`\n${error.message}\n\`\`\``);
+                    }
                 } else {
                     actionsExecuted.push(`⚠️ Unknown action type: ${actionType}`);
                 }
@@ -291,8 +328,8 @@ private async executeActions(actionsResponse: string, webviewView: vscode.Webvie
         }
     
         if (actionsExecuted.length > 0) {
-            webviewView.webview.postMessage({ command: 'response', text: `**Execution Summary:**\n\n${actionsExecuted.join('\n')}` });
-        } else if (!hasActions) {
+            webviewView.webview.postMessage({ command: 'response', text: `**Execution Summary:**\n\n${actionsExecuted.join('\n\n')}` });
+        } else if (actions.length === 0) {
             webviewView.webview.postMessage({ command: 'response', text: "No actionable steps were generated from the plan." });
         }
     }
@@ -307,6 +344,7 @@ private async executeActions(actionsResponse: string, webviewView: vscode.Webvie
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <link href="${styleUri}" rel="stylesheet">
+            <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
             <title>AI Agent</title>
         </head>
         <body>
