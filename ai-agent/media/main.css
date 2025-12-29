@@ -119,3 +119,148 @@ body, html {
     background-color: var(--vscode-disabledInput-background);
 }
 
+#cancel-button {
+    background-color: var(--vscode-button-destructiveBackground, #d9534f);
+    color: var(--vscode-button-destructiveForeground, white);
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+#cancel-button:hover {
+    background-color: var(--vscode-button-destructiveHoverBackground, #c9302c);
+}
+
+#cancel-button:disabled {
+    background-color: var(--vscode-disabledInput-background);
+    color: var(--vscode-disabledInput-foreground);
+    cursor: not-allowed;
+}
+
+.hidden {
+    display: none;
+}
+
+#awaiting-response {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+    background-color: var(--vscode-editor-foreground);
+    border-radius: 50%;
+    display: inline-block;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dot1 {
+    animation-delay: -0.32s;
+}
+
+.dot2 {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+    0%, 80%, 100% {
+        transform: scale(0);
+    } 40% {
+        transform: scale(1.0);
+    }
+}
+
+.interactive-command-container {
+    border: 1px solid var(--vscode-editorWidget-border);
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.interactive-command-container p {
+    margin-top: 0;
+}
+
+.command-text {
+    background-color: var(--vscode-textBlockQuote-background);
+    padding: 8px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.interactive-buttons {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.interactive-buttons button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.execute-button {
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+}
+
+.execute-button:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}
+
+.ignore-button {
+    background-color: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+}
+
+.ignore-button:hover {
+    background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.command-output-container {
+    background-color: var(--vscode-textBlockQuote-background);
+    border: 1px solid var(--vscode-editorWidget-border);
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.command-output-container p {
+    margin-top: 0;
+    font-weight: bold;
+}
+
+.command-output-container pre {
+    background-color: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
+    padding: 10px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: var(--vscode-editor-font-family);
+}
+
+.stdout-chunk {
+    color: var(--vscode-editor-foreground);
+}
+
+.stderr-chunk {
+    color: var(--vscode-errorForeground);
+}
+
+.exit-code {
+    margin-top: 8px;
+    font-style: italic;
+    color: var(--vscode-descriptionForeground);
+}
+

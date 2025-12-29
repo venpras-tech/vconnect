@@ -1,6 +1,6 @@
 {
   "name": "ai-agent",
-  "publisher": "venpras-tech",
+  "publisher": "aigen",
   "displayName": "AI Agent",
   "description": "An AI agent for VSCode that connects to a local LLM.",
   "version": "0.0.1",
@@ -20,8 +20,22 @@
       {
         "command": "ai-agent.showChat",
         "title": "AI Agent: Show Chat"
+      },
+      {
+        "command": "ai-agent.showSettings",
+        "title": "AI Agent: Show Settings",
+        "icon": "$(gear)"
       }
     ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "ai-agent.showSettings",
+          "when": "view == aiAgentView",
+          "group": "navigation"
+        }
+      ]
+    },
     "viewsContainers": {
       "activitybar": [
         {
@@ -39,6 +53,16 @@
           "name": "Chat"
         }
       ]
+    },
+    "configuration": {
+      "title": "AI Agent",
+      "properties": {
+        "ai-agent.terminal.shell": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies the shell to use for executing terminal commands. If not set, it uses the system's default shell."
+        }
+      }
     }
   },
   "scripts": {
@@ -68,7 +92,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "axios": "^1.13.2"
+    "axios": "^1.7.2"
   }
 }
 

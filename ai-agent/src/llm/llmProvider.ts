@@ -1,4 +1,6 @@
+import { CancellationToken } from "vscode";
+
 export interface ILLMProvider {
-    listModels(): Promise<string[]>;
-    prompt(prompt: string, model: string, token?: string): Promise<string>;
+    listModels(baseUrl: string): Promise<string[]>;
+    prompt(prompt: string, model: string, baseUrl: string, token: string | undefined, cancellationToken: CancellationToken): Promise<string>;
 }
