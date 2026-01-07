@@ -1,13 +1,11 @@
 .actions-container {
   display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  flex:0.1;
-  width: fit-content;
+  justify-content: center;
 }
 
 .send-button,
 .cancel-button {
+  background: none;
   border: none;
   cursor: pointer;
   font-size: 1.5rem;

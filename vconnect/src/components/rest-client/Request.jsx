@@ -6,8 +6,7 @@ const Request = ({
   url,
   onMethodChange,
   onUrlChange,
-  onSend,
-  onSave,
+  actions,
 }) => {
   return (
     <div className="request-container">
@@ -28,6 +27,7 @@ const Request = ({
         value={url}
         onChange={(e) => onUrlChange(e.target.value)}
       />
+        {actions}
     </div>
   );
 };

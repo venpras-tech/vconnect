@@ -26,7 +26,6 @@
 }
 
 .top-panel-req {
-  display: flex;
   flex: 0.1;
   padding: 2px;
 }
